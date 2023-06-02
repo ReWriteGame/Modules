@@ -45,19 +45,12 @@ namespace Modules.Score
             CorrectValue();
         }
 
-        public ScoreCounterData(float value)
+        public ScoreCounterData(float value = 0)
         {
             valueLimit = new Limit(float.NegativeInfinity, float.PositiveInfinity);
             this.value = value;
             CorrectValue();
         }
-        
-        /*public ScoreCounterData()// need C# 10+
-        {
-            valueLimit = new Limit(float.NegativeInfinity, float.PositiveInfinity);
-            this.value = 0;
-            CorrectValue();
-        }*/
         
         #endregion
 
