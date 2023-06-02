@@ -1,3 +1,6 @@
+#region Version scripts = 1.0
+#endregion
+
 using System;
 using UnityEngine;
 
@@ -38,6 +41,7 @@ namespace Modules.Score
         public float Value => data.Value;
         public float MinValue => data.ValueLimit.MinValue;
         public float MaxValue => data.ValueLimit.MaxValue;
+        public Limit ValueLimit => data.ValueLimit;
         public ScoreCounterData Data => data;
         
         #endregion 

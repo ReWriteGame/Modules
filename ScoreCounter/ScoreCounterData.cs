@@ -1,5 +1,10 @@
+#region Version scripts = 1.0
+#endregion
+
 using System;
 using UnityEngine;
+
+
 
 namespace Modules.Score
 {
@@ -14,51 +19,65 @@ namespace Modules.Score
         public Limit ValueLimit => valueLimit;
         public float MinValue => valueLimit.MinValue;
         public float MaxValue => valueLimit.MaxValue;
-        
-        #endregion 
-        
+
+        #endregion
+
         #region Сonstructors
         public ScoreCounterData(ScoreCounterData data)
         {
             this = data;
         }
-        
+
         public ScoreCounterData(float value, Limit limit)
         {
             valueLimit = limit;
             this.value = value;
             CorrectValue();
         }
-        
+
         public ScoreCounterData(float value, float minValue, float maxValue)
         {
             valueLimit = new Limit(minValue, maxValue);
             this.value = value;
             CorrectValue();
         }
+
+        public ScoreCounterData(float value)
+        {
+            valueLimit = new Limit(float.NegativeInfinity, float.PositiveInfinity);
+            this.value = value;
+            CorrectValue();
+        }
+        
+        /*public ScoreCounterData()// need C# 10+
+        {
+            valueLimit = new Limit(float.NegativeInfinity, float.PositiveInfinity);
+            this.value = 0;
+            CorrectValue();
+        }*/
         
         #endregion
-        
+
         public void SetMinLimit(float value)
         {
             float min = Math.Min(value, valueLimit.MaxValue);
             valueLimit = new Limit(min, valueLimit.MaxValue);
             CorrectValue();
         }
-        
+
         public void SetMaxLimit(float value)
         {
             float max = Math.Max(valueLimit.MinValue, value);
             valueLimit = new Limit(valueLimit.MinValue, max);
             CorrectValue();
         }
-        
+
         public void SetValue(float value)
         {
             this.value = value;
             CorrectValue();
         }
-        
+
         public bool CheckValueIsMin()
         {
             return Mathf.Approximately(value, valueLimit.MinValue);
@@ -68,22 +87,22 @@ namespace Modules.Score
         {
             return Mathf.Approximately(value, valueLimit.MaxValue);
         }
-        
+
         public float LengthCurrentScoreToMaximum()
         {
             return Math.Abs(valueLimit.MaxValue - Value);
         }
-        
+
         public float LengthCurrentScoreToMinimum()
         {
             return Math.Abs(Value - valueLimit.MinValue);
         }
-        
+
         public float LengthLimit()
         {
             return valueLimit.GetLengthLimit();
-        } 
-        
+        }
+
         private void CorrectValue()
         {
             if (!IsValueCorrect())

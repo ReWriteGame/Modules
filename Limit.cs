@@ -1,3 +1,6 @@
+#region Version scripts = 1.0
+#endregion
+
 using System;
 using UnityEngine;
 
