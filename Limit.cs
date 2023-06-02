@@ -1,4 +1,4 @@
-#region Version scripts = 1.0
+#region Version scripts = 1.1
 #endregion
 
 using System;
@@ -14,7 +14,8 @@ namespace Modules.Score
 
         public float MinValue => minValue;
         public float MaxValue => maxValue;
-        
+        public float LengthLimit => Math.Abs(maxValue - minValue);
+
         public Limit(Limit limit)
         {
             this = limit;
@@ -28,11 +29,6 @@ namespace Modules.Score
             CheckRightValue();
         }
 
-        public float GetLengthLimit()
-        {
-            return Math.Abs(maxValue - minValue);
-        }
-        
         private void CheckRightValue()
         {
             if (minValue > maxValue)

@@ -1,4 +1,4 @@
-#region Version scripts = 1.0
+#region Version scripts = 1.1
 #endregion
 
 using System;
@@ -19,14 +19,17 @@ namespace Modules.Score
         public Limit ValueLimit => valueLimit;
         public float MinValue => valueLimit.MinValue;
         public float MaxValue => valueLimit.MaxValue;
+        public float LengthLimit => valueLimit.LengthLimit;
+        public float LengthCurrentScoreToMaximum => Math.Abs(valueLimit.MaxValue - Value);
+        public float LengthCurrentScoreToMinimum => Math.Abs(Value - valueLimit.MinValue);
+        public bool CheckValueIsMin => Mathf.Approximately(value, valueLimit.MinValue);
+        public bool CheckValueIsMax => Mathf.Approximately(value, valueLimit.MaxValue);
+
 
         #endregion
 
         #region Сonstructors
-        public ScoreCounterData(ScoreCounterData data)
-        {
-            this = data;
-        }
+        public ScoreCounterData(ScoreCounterData data) => this = data;
 
         public ScoreCounterData(float value, Limit limit)
         {
@@ -77,32 +80,7 @@ namespace Modules.Score
             this.value = value;
             CorrectValue();
         }
-
-        public bool CheckValueIsMin()
-        {
-            return Mathf.Approximately(value, valueLimit.MinValue);
-        }
-
-        public bool CheckValueIsMax()
-        {
-            return Mathf.Approximately(value, valueLimit.MaxValue);
-        }
-
-        public float LengthCurrentScoreToMaximum()
-        {
-            return Math.Abs(valueLimit.MaxValue - Value);
-        }
-
-        public float LengthCurrentScoreToMinimum()
-        {
-            return Math.Abs(Value - valueLimit.MinValue);
-        }
-
-        public float LengthLimit()
-        {
-            return valueLimit.GetLengthLimit();
-        }
-
+       
         private void CorrectValue()
         {
             if (!IsValueCorrect())
@@ -112,9 +90,6 @@ namespace Modules.Score
             value = Mathf.Clamp(value, valueLimit.MinValue, valueLimit.MaxValue);
         }
 
-        private bool IsValueCorrect()
-        {
-            return valueLimit.MinValue <= valueLimit.MaxValue && value >= valueLimit.MinValue && value <= valueLimit.MaxValue;
-        }
+        private bool IsValueCorrect() => valueLimit.MinValue <= valueLimit.MaxValue && value >= valueLimit.MinValue && value <= valueLimit.MaxValue;
     }
 }

@@ -1,4 +1,4 @@
-#region Version scripts = 1.0
+#region Version scripts = 1.1
 #endregion
 
 using System;
@@ -43,9 +43,10 @@ namespace Modules.Score
         public float MaxValue => data.ValueLimit.MaxValue;
         public Limit ValueLimit => data.ValueLimit;
         public ScoreCounterData Data => data;
-        
-        #endregion 
-        
+        public float LengthLimit => data.ValueLimit.LengthLimit;
+
+        #endregion
+
         #region Сonstructors
         public ScoreCounter()
         {
@@ -58,30 +59,18 @@ namespace Modules.Score
         }
        
         #endregion
-        
+     
+        public void SetValue(float value) => SetData(new ScoreCounterData(value, data.MinValue, data.MaxValue));
+        public void SetMinValue(float value) => SetData(new ScoreCounterData(data.Value, value, data.MaxValue));
+        public void SetMaxValue(float value) => SetData(new ScoreCounterData(data.Value, data.MinValue, value));
         public void SetData(ScoreCounterData data)
         {
             var oldData = this.data;
             this.data = data;
             InvokeDataChangeEvents(oldData, this.data);
         }
-        
-        public void SetValue(float value)
-        {
-            SetData(new ScoreCounterData(value, data.MinValue, data.MaxValue));
-        }
-        
-        public void SetMinValue(float value)
-        {
-            SetData(new ScoreCounterData(data.Value, value, data.MaxValue));
-        }
-        
-        public void SetMaxValue(float value)
-        {
-            SetData(new ScoreCounterData(data.Value, data.MinValue, value));
-        }
-      
-        
+
+
         public void IncreaseValue(float value) 
         {
             if (value <= 0) return;
@@ -107,7 +96,7 @@ namespace Modules.Score
         {
             if (value <= 0) return false;
 
-            if (data.LengthCurrentScoreToMaximum() >= value)
+            if (data.LengthCurrentScoreToMaximum >= value)
             {
                 IncreaseValue(value);
                 return true;
@@ -123,7 +112,7 @@ namespace Modules.Score
         {
             if (value <= 0) return false;
            
-            if (data.LengthCurrentScoreToMinimum() >= value) 
+            if (data.LengthCurrentScoreToMinimum >= value) 
             {
                 DecreaseValue(value);
                 return true;
@@ -174,22 +163,16 @@ namespace Modules.Score
         }
         
         
-        public float GetLengthLimit()
-        {
-            return data.ValueLimit.GetLengthLimit();
-        }
-        
-        
         private void InvokeIncreaseValueEvents(float increaseValue)
         {
-            if (data.CheckValueIsMax())
+            if (data.CheckValueIsMax)
                 OnReachMaxValue?.Invoke();
             OnIncreaseValue?.Invoke(increaseValue);
         }
         
         private void InvokeDecreaseValueEvents(float decreaseValue)
         {
-            if (data.CheckValueIsMin())
+            if (data.CheckValueIsMin)
                 OnReachMinValue?.Invoke();
             OnDecreaseValue?.Invoke(decreaseValue);
         }
