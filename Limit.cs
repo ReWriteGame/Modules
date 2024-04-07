@@ -1,4 +1,4 @@
-#region Version scripts = 1.1
+#region Version scripts = 1.2
 #endregion
 
 using System;
