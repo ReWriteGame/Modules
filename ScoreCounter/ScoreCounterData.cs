@@ -1,4 +1,4 @@
-#region Version scripts = 1.2
+#region Version scripts = 1.3
 #endregion
 
 using System;
@@ -76,10 +76,7 @@ namespace Modules.Score
        
         private void CorrectValue()
         {
-            if (!IsValueCorrect())
-            {
-                Debug.Log("Attempt to set the wrong date. Data will be corrected.");
-            }
+            //if (!IsValueCorrect()) Debug.Log("Attempt to set the wrong date. Data will be corrected.");
             value = Mathf.Clamp(value, valueLimit.MinValue, valueLimit.MaxValue);
         }
 

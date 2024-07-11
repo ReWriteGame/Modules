@@ -1,4 +1,5 @@
-#region Version scripts = 0.1 // test script
+#region Version scripts = 0.3 // test script
+
 #endregion
 
 using System;
@@ -7,26 +8,30 @@ using UnityEngine;
 
 namespace Modules.Score.Visual
 {
-    public class ScoreCounterVisualText : MonoBehaviour 
+    public class ScoreCounterVisualText : MonoBehaviour
     {
         [SerializeField] private Label valueLabel;
         [SerializeField] private Label valueMinLabel;
         [SerializeField] private Label valueMaxLabel;
-        [SerializeField] private bool showValueInPercent = false;
+        [SerializeField] private bool showValueInPercent;
 
         private ScoreCounter scoreCounter;
+
+        private void OnDestroy() => Unsubscribe();
 
         public void SetScoreCounter(ScoreCounter scoreCounter)
         {
             if (this.scoreCounter != null) Unsubscribe();
             this.scoreCounter = scoreCounter;
             Subscribe();
-            UpdateScore(scoreCounter.Value);
+            UpdateScore();
         }
 
-        private void OnDestroy()
+        public void UpdateScore()
         {
-            Unsubscribe();
+            UpdateScore(scoreCounter.Value);
+            UpdateLimitMin(scoreCounter.MinValue);
+            UpdateLimitMax(scoreCounter.MaxValue);
         }
 
         private void Subscribe()
@@ -45,37 +50,22 @@ namespace Modules.Score.Visual
             scoreCounter.OnChangeLimitMax -= UpdateLimitMax;
         }
 
-        public void UpdateScore(float value)
-        {
-            ShowValue(valueLabel.label, value, valueLabel.textFormat, valueLabel.centerSymbol);
-        }
+        private void UpdateScore(float value) => ShowLabel(valueLabel.label, showValueInPercent,
+            $"{scoreCounter.GetValueInPercent() * 100}", ShowValue(value, valueLabel.textFormat, valueLabel.centerSymbol));
 
-        private void UpdateLimitMin(float value)
-        {
-            ShowValue(valueMinLabel.label, value, valueMinLabel.textFormat, valueMinLabel.centerSymbol);
-        }
+        private void UpdateLimitMin(float value) => ShowLabel(valueMinLabel.label, showValueInPercent,
+            $"{0}", ShowValue(value, valueMinLabel.textFormat, valueMinLabel.centerSymbol));
 
-        private void UpdateLimitMax(float value)
-        {
-            ShowValue(valueMaxLabel.label, value, valueMaxLabel.textFormat, valueMaxLabel.centerSymbol);
-        }
+        private void UpdateLimitMax(float value) => ShowLabel(valueMaxLabel.label, showValueInPercent,
+            $"{100}", ShowValue(value, valueMaxLabel.textFormat, valueMaxLabel.centerSymbol));
 
-        private void ShowValue(TextMeshProUGUI label, float value, string format = "00.00", string replaceSymbol = ".")
+        private string ShowValue(float value, string format = "00.00", string replaceSymbol = ".") =>
+            value.ToString(format: $"{format}").Replace(",", $"{replaceSymbol}");
+
+        private void ShowLabel(TextMeshProUGUI label, bool isPercent, string value1, string value2)
         {
             if (label == null || scoreCounter == null) return;
-
-            if (showValueInPercent) value = ShowInPercent(value, scoreCounter.MinValue, scoreCounter.MaxValue);
-            string formatValue = value.ToString(format: $"{format}").Replace(",", $"{replaceSymbol}");
-            label.text = formatValue;
-        }
-       
-        private float ShowInPercent(float value, float minValue, float maxValue)
-        {
-            float sizeLimit = Mathf.Abs(maxValue - minValue);
-            float valueInLimit = Mathf.Abs(value - minValue);
-            float percentValue = sizeLimit / valueInLimit;
-            return 100 / percentValue;
-            //todo make this metods in scorecounter
+            label.text = (isPercent) ? value1 : value2;
         }
 
         [Serializable]
@@ -87,4 +77,3 @@ namespace Modules.Score.Visual
         }
     }
 }
-
